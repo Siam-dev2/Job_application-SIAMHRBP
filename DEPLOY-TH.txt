@@ -1,0 +1,16 @@
+STARLIVE-S Theme Patch — Web Job Application Pro
+
+Files in this archive use paths relative to the project root.
+1. Extract this ZIP into D:\Job_application-main and choose Replace files if prompted.
+2. In PowerShell run:
+
+Set-Location 'D:\Job_application-main'
+npm.cmd run build
+if ($LASTEXITCODE -ne 0) { throw "BUILD FAILED - หยุดก่อน Deploy" }
+npx.cmd wrangler pages deploy dist --project-name careers-starlive
+
+3. After a successful deployment, open https://careers.starlive-s.com and press Ctrl+F5.
+
+This patch updates the left login panel to the premium navy/gold theme, enlarges the transparent STARLIVE-S logo, improves header logo sizing, and uses the transparent PNG favicon. It does not intentionally change authentication, Supabase settings, application data, or other application logic.
+
+Important: Deploy only if the build succeeds. The build could not be validated in this Linux workspace because the uploaded node_modules lacks the Linux Rollup native package; run the build on the Windows project environment before deployment.

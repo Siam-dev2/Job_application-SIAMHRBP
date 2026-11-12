@@ -1,0 +1,7 @@
+STARLIVE Logo White Wordmark Patch
+
+1) Extract this ZIP into D:\Job_application-main and allow overwrite of src/styles.css and public/starlive-logo.png.
+2) Run: npm.cmd run build
+3) Only if build succeeds, run: npx.cmd wrangler pages deploy dist --project-name careers-starlive
+
+This patch makes the logo background transparent, changes the dark wordmark to white, keeps the orange/gold star, and enlarges the logo on the left login panel. It does not change app authentication or data logic.

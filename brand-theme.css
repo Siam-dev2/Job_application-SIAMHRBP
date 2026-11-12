@@ -1,0 +1,104 @@
+:root {
+  --brand: #f7931e;
+  --brand-dark: #f0983a;
+  --brand-deepest: #99602b;
+  --cream: #fff8ee;
+  --beige: #f5e9d8;
+  --warm: #e8c9a5;
+  --brown: #a9682b;
+  --navy: #49372b;
+  --green: #a9682b;
+  --gold: #f5a044;
+  --silver: #e8c9a5;
+  --soft: #f5e9d8;
+  --ink: #49372b;
+  --muted: #8c6241;
+  --line: #e8c9a5;
+  --panel: #fff;
+  --bg: #fff8ee;
+  --accent: var(--brand);
+  --shadow: 0 12px 35px rgb(73 55 43 / 8%);
+  --status-bg: #fce3c4;
+  --status-ink: #8d4d18;
+  --auth-start: #a9682b;
+  --auth-end: var(--brand-deepest);
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --ink: #f5e9d8;
+  --navy: #f5e9d8;
+  --green: #f0a95c;
+  --brown: #e8c9a5;
+  --muted: #c9a98a;
+  --line: #4a3a2c;
+  --panel: #241a12;
+  --bg: #1a120b;
+  --soft: #33261a;
+  --beige: #3d2a16;
+  --warm: #5a411f;
+  --shadow: 0 12px 35px rgb(0 0 0 / 32%);
+  --status-bg: #4a2f16;
+  --status-ink: #f5a044;
+  --auth-start: #3d2a16;
+  --auth-end: #241a12;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.brand-lockup img {
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgb(73 55 43 / 30%));
+}
+
+.hero {
+  background: linear-gradient(110deg, var(--beige), var(--cream) 60%, #fbe3c4);
+}
+
+.status-pill {
+  background: var(--status-bg);
+  color: var(--status-ink);
+}
+
+.auth-brand {
+  background: linear-gradient(145deg, var(--auth-start), var(--auth-end));
+}
+
+.auth-brand .brand-lockup img {
+  filter: drop-shadow(0 8px 16px rgb(35 21 11 / 38%));
+}
+
+html[data-theme='dark'] .hero {
+  background: linear-gradient(110deg, var(--soft), var(--panel) 60%, var(--beige));
+  border-color: var(--line);
+}
+
+html[data-theme='dark'] .hero h1,
+html[data-theme='dark'] .section-title h2,
+html[data-theme='dark'] .metric b,
+html[data-theme='dark'] .job-card h2,
+html[data-theme='dark'] .form-top h1,
+html[data-theme='dark'] .auth-card h2,
+html[data-theme='dark'] .modal-head h2 {
+  color: var(--ink);
+}
+
+html[data-theme='dark'] .auth-brand {
+  background: linear-gradient(145deg, var(--auth-start), var(--auth-end));
+}
+
+html[data-theme='dark'] .status-pill {
+  color: var(--status-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,30 @@
+# ---- dependencies ----
+node_modules
+
+# ---- build output ----
+dist
+
+# ---- local environment / secrets (do not commit) ----
+.env
+.env.local
+.env.*.local
+.env.migration
+
+# ---- sensitive notes (may contain passwords / API keys) ----
+เอกสารข้อความ ใหม่.txt
+เอกสารข้อความ*.txt
+
+# ---- database dumps / backups (may contain personal data) ----
+backups/
+backups.zip
+
+# ---- local documents (may contain personal data) ----
+/*.pdf
+
+# ---- tooling temp / infra ----
+supabase/.temp/
+.wrangler/
+
+# ---- misc ----
+.DS_Store
+*.log

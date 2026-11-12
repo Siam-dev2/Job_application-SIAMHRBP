@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบสมัครงาน (Job Application Form)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sarabun: ['Sarabun', 'sans-serif'],
+                    },
+                    colors: {
+                        starlive: {
+                            primary: '#f59e0b',
+                            dark: '#d97706',
+                            light: '#fef3c7',
+                            accent: '#fbbf24'
+                        },
+                        imdp: {
+                            primary: '#ea580c',
+                            dark: '#18181b',
+                            light: '#ffedd5',
+                            accent: '#c2410c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        /* A4 Page Styling for Screen & Print */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 8mm 10mm;
+            margin: 10mm auto;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .a4-page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+                width: 100%;
+                min-height: 100vh;
+                padding: 8mm 10mm;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 0mm;
+            }
+        }
+
+        /* Compact personal background rows: keeps every label while cutting dead vertical space */
+        .pb-block {
+            font-size: 11px;
+            line-height: 1.2;
+        }
+        .pb-block > * + * {
+            margin-top: 0;
+        }
+        .pb-block .input-line {
+            line-height: 1.2;
+        }
+        .pb-block label {
+            white-space: nowrap;
+        }
+        .section-head {
+            padding: 1px 6px;
+            margin-bottom: 1px;
+            line-height: 1.3;
+        }
+
+        /* Page 1 fills the A4 body as a single flex column: the personal
+           background absorbs the leftover height (its rows spread evenly) so
+           the education table sits directly underneath instead of being pushed
+           to the bottom past an oversized empty gap. The id selectors keep
+           these rules above Tailwind's utilities (the CDN injects its
+           stylesheet after this one, so equal-specificity rules would
+           otherwise lose) and are scoped to #page-1 so pages 2-3 stay put. */
+        .page-fill {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+        }
+        #page-1 .page-fill > .pb-section {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        #page-1 .pb-section > .pb-block {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            row-gap: 2px;
+        }
+        #page-1 .edu-bottom {
+            margin-top: 6px;
+            padding-top: 0;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        /* Page 2: tighter vertical rhythm so 3 employment rows with long text
+           still fit on a single A4 page without clipping any content. */
+        #page-2 .mapped-wrap {
+            line-height: 1.18;
+        }
+        #page-2 td,
+        #page-2 th {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Custom form underline inputs */
+        .input-line {
+            border-bottom: 1px dotted #64748b;
+            outline: none;
+            background: transparent;
+            padding: 0 4px;
+            width: 100%;
+            height: 1.3em;
+            line-height: 1.3;
+            min-width: 0;
+        }
+        .input-line:focus {
+            border-bottom-color: #0284c7;
+        }
+
+        /* Custom checkboxes */
+        .form-checkbox {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1px solid #475569;
+            border-radius: 2px;
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            cursor: pointer;
+            background: #fff;
+        }
+        .form-checkbox:checked::after {
+            content: '✔';
+            position: absolute;
+            top: -3px;
+            left: 1px;
+            font-size: 11px;
+            color: #0f172a;
+        }
+
+        table th, table td {
+            border: 1px solid #cbd5e1;
+            padding: 3px 5px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="no-print bg-slate-900 text-white py-3 px-6 shadow-md sticky top-0 z-50 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <span class="font-bold text-lg flex items-center gap-2">
+                <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                ระบบจัดการใบสมัครงาน
+            </span>
+            <div class="flex items-center bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <button onclick="setBrand('starlive')" id="btn-starlive" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-amber-500 text-slate-950 shadow">
+                    ⭐ Star Live-s
+                </button>
+                <button onclick="setBrand('imdp')" id="btn-imdp" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white">
+                    🏢 I'M DP
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="flex items-center bg-slate-800 p-1 rounded-lg border border-slate-700 text-xs">
+                <button onclick="switchView('all')" id="view-all-btn" class="px-3 py-1.5 rounded-md bg-slate-700 text-white font-medium">แสดงทั้งหมด (3 หน้า)</button>
+                <button onclick="switchView('tab')" id="view-tab-btn" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white font-medium">ทีละหน้า (Tabs)</button>
+            </div>
+            <button onclick="window.print()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow flex items-center gap-2 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                พิมพ์เอกสาร (Print A4)
+            </button>
+        </div>
+    </div>
+
+    <div id="tab-nav-container" class="no-print max-w-[210mm] mx-auto mt-4 px-4 hidden">
+        <div class="flex border-b border-slate-300 gap-2">
+            <button onclick="showTab(1)" id="tab-btn-1" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-white border-t border-x border-slate-300 text-sky-700">หน้า 1: ข้อมูลส่วนตัว</button>
+            <button onclick="showTab(2)" id="tab-btn-2" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-200 text-slate-600">หน้า 2: ประวัติการทำงานและความสามารถ</button>
+            <button onclick="showTab(3)" id="tab-btn-3" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-200 text-slate-600">หน้า 3: เงื่อนไขและรับรอง</button>
+        </div>
+    </div>
+
+    <main class="py-4">
+        <!-- ================= PAGE 1 ================= -->
+        <div id="page-1" class="a3-container a4-page">
+            <div class="page-fill">
+                <!-- Header Banner -->
+                <div class="flex justify-between items-start border-b-2 border-slate-800 pb-2 mb-2">
+                    <div>
+                        <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">ใบสมัครงาน (Application Form)</div>
+                        <h1 id="brand-title-1" class="text-lg font-bold text-amber-600 flex items-center gap-1 mt-0.5">
+                            <span id="brand-logo-text">Star Live-s</span>
+                        </h1>
+                        <p class="text-[10px] text-slate-600 mt-0.5">ใบสมัครเป็นส่วนหนึ่งในการพิจารณา โปรดกรอกข้อความให้ครบถ้วน ข้าพเจ้าผู้สมัครงาน ขอให้ข้อมูลส่วนบุคคลของข้าพเจ้าตามความเป็นจริงดังต่อไปนี้</p>
+                        <p class="text-[9px] text-slate-500 italic">Application Form is a part of consideration, Please fill this form completely.</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <div id="candidate-photo-box" class="w-20 h-24 border-2 border-dashed border-slate-400 flex flex-col items-center justify-center text-center p-1 bg-slate-50 rounded">
+                            <span class="text-[10px] font-bold text-slate-500">รูปถ่าย</span>
+                            <span class="text-[9px] text-slate-400">PHOTO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Application Info -->
+                <div class="grid grid-cols-12 gap-2 text-xs mb-1 bg-slate-50 p-1 rounded border border-slate-200">
+                    <div class="col-span-4 flex items-center gap-1">
+                        <span class="font-semibold whitespace-nowrap">วันที่สมัคร :</span>
+                        <input type="text" class="input-line text-xs" placeholder="Date">
+                    </div>
+                    <div class="col-span-5 flex items-center gap-1">
+                        <span class="font-semibold whitespace-nowrap">ตำแหน่งที่ต้องการ :</span>
+                        <input type="text" class="input-line text-xs" placeholder="Position applied for">
+                    </div>
+                    <div class="col-span-3 flex items-center gap-1">
+                        <span class="font-semibold whitespace-nowrap">เงินเดือนที่ต้องการ :</span>
+                        <input type="text" class="input-line text-xs" placeholder="Expected salary">
+                    </div>
+                </div>
+
+                <!-- Personal Background Section -->
+                <div class="mb-1 pb-section">
+                    <div class="section-head bg-slate-800 text-white text-xs font-bold flex justify-between items-center">
+                        <span>ประวัติส่วนตัว (Personal Background)</span>
+                    </div>
+
+                    <div class="pb-block">
+                        <div class="flex gap-3 items-center">
+                            <div class="flex-1 flex items-center gap-1">
+                                <span class="whitespace-nowrap font-medium">ชื่อ-สกุลภาษาไทย :</span>
+                                <input type="text" class="input-line">
+                            </div>
+                            <div class="w-1/4 flex items-center gap-1">
+                                <span class="whitespace-nowrap font-medium">ชื่อเล่น :</span>
+                                <input type="text" class="input-line">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-center">
+                            <div class="flex-1 flex items-center gap-1">
+                                <span class="whitespace-nowrap font-medium">Name in English :</span>
+                                <input type="text" class="input-line">
+                            </div>
+                            <div class="w-1/4 flex items-center gap-1">
+                                <span class="whitespace-nowrap font-medium">Nickname :</span>
+                                <input type="text" class="input-line">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium">เพศ (Sex):</span>
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ชาย (Male)</label>
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> หญิง (Female)</label>
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ระบุ</label>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">วัน เดือน ปี เกิด (Date of Birth):</span>
+                                <input type="text" class="input-line w-32">
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">อายุ (Age):</span>
+                                <input type="text" class="input-line w-12">
+                                <span>ปี</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">สัญชาติ (Nationality):</span>
+                                <input type="text" class="input-line">
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">เชื้อชาติ (Race):</span>
+                                <input type="text" class="input-line">
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">ศาสนา (Religion):</span>
+                                <input type="text" class="input-line">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">ส่วนสูง (Height):</span>
+                                <input type="text" class="input-line">
+                                <span class="text-[10px]">ซม.</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="font-medium">น้ำหนัก (Weight):</span>
+                                <input type="text" class="input-line">
+                                <span class="text-[10px]">กก.</span>
+                            </div>
+                            <div class="col-span-2 flex items-center gap-1">
+                                <span class="font-medium">โทรศัพท์ (Telephone):</span>
+                                <input type="text" class="input-line">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="flex items-center gap-1"><span class="font-medium">Line ID:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">Facebook:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">Instagram:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">Tiktok:</span><input type="text" class="input-line"></div>
+                        </div>
+
+                        <div class="flex items-center gap-1">
+                            <span class="font-medium whitespace-nowrap">E-mail:</span>
+                            <input type="text" class="input-line">
+                        </div>
+
+                        <div class="flex items-center gap-1">
+                            <span class="font-medium whitespace-nowrap">ที่อยู่ปัจจุบันที่ติดต่อได้สะดวก (Present Address):</span>
+                            <input type="text" class="input-line">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1"><span class="font-medium">บัตรประชาชนเลขที่:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">วันออกบัตร:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">บัตรหมดอายุ:</span><input type="text" class="input-line"></div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <span class="font-medium">สถานะความเป็นอยู่ (Living Status):</span>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> บ้านส่วนตัว</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> บ้านเช่า</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> อาศัยบิดามารดา</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> อาศัยอยู่กับผู้อื่น</label>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <span class="font-medium">สถานะครอบครัว (Marital Status):</span>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> โสด</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> แต่งงาน</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> หย่า</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> หม้าย</label>
+                            <span class="text-slate-400">|</span>
+                            <span class="font-medium">กรณีแต่งงาน:</span>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> จดทะเบียน</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ได้จด</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> แยกกันอยู่</label>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1"><span class="font-medium">ชื่อคู่สมรส:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">อาชีพ:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">จำนวนบุตร:</span><input type="text" class="input-line w-8"><span>คน</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 text-[10px]">
+                            <div>อายุบุตรคนที่ 1: <input type="text" class="input-line w-16"></div>
+                            <div>อายุบุตรคนที่ 2: <input type="text" class="input-line w-16"></div>
+                            <div>อายุบุตรคนที่ 3: <input type="text" class="input-line w-16"></div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1"><span class="font-medium">ชื่อบิดา:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">อายุ:</span><input type="text" class="input-line w-10"> <span class="font-medium">อาชีพ:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-2">
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> มีชีวิต</label>
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ถึงแก่กรรม</label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-1"><span class="font-medium">ชื่อมารดา:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-1"><span class="font-medium">อายุ:</span><input type="text" class="input-line w-10"> <span class="font-medium">อาชีพ:</span><input type="text" class="input-line"></div>
+                            <div class="flex items-center gap-2">
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> มีชีวิต</label>
+                                <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ถึงแก่กรรม</label>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-center">
+                            <div>จำนวนพี่น้อง: <input type="text" class="input-line w-12"> คน (รวมตัวท่านด้วย)</div>
+                            <div>ท่านเป็นคนที่: <input type="text" class="input-line w-12"></div>
+                            <div>สถานะทางทหาร: <input type="text" class="input-line w-24"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Background -->
+                <div class="mt-3 edu-bottom">
+                    <div class="section-head bg-slate-800 text-white text-xs font-bold flex justify-between items-center">
+                        <span>ประวัติการศึกษา (Educational Background)</span>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-[10px]">
+                                <th style="width:15%">ระดับการศึกษา<br><span class="text-[9px] font-normal">Education</span></th>
+                                <th style="width:26%">ชื่อสถาบัน<br><span class="text-[9px] font-normal">Name of Institute</span></th>
+                                <th style="width:12%">จังหวัด / ประเทศ<br><span class="text-[9px] font-normal">Country</span></th>
+                                <th style="width:14%">ปีการศึกษา (จาก-ถึง)<br><span class="text-[9px] font-normal">Year Attended (From-To)</span></th>
+                                <th style="width:25%">วิชาที่ศึกษา/วุฒิ<br><span class="text-[9px] font-normal">Course/Degree</span></th>
+                                <th style="width:8%">เกรด<br><span class="text-[9px] font-normal">GPA</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-[10px]">
+                            <tr>
+                                <td class="font-medium">มัธยมศึกษา<br><span class="text-[9px] text-slate-500">Secondary</span></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">อาชีวะศึกษา<br><span class="text-[9px] text-slate-500">Vocational</span></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">ปริญญาตรี<br><span class="text-[9px] text-slate-500">Bachelor Degree</span></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">ปริญญาโท<br><span class="text-[9px] text-slate-500">Master Degree</span></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                                <td><input type="text" class="input-line"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Page 1 -->
+            <div class="flex justify-between items-center text-[10px] text-slate-500 pt-1 border-t border-slate-200 mt-1">
+                <span>เริ่มใช้แบบฟอร์มวันที่ 2 กุมภาพันธ์ 2569</span>
+                <span class="font-semibold">ST-A003-2026</span>
+                <span>หน้า 1 / 3</span>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2 ================= -->
+        <div id="page-2" class="a3-container a4-page">
+            <div>
+                <!-- Header Page 2 -->
+                <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-2">
+                    <h2 class="text-sm font-bold text-slate-800">ประวัติการทำงาน และความสามารถพิเศษ (Employment History & Skills)</h2>
+                    <span id="brand-logo-text-2" class="text-xs font-bold text-amber-600">Star Live-s</span>
+                </div>
+
+                <!-- Employment History Table -->
+                <div class="mb-2">
+                    <div class="bg-slate-800 text-white text-xs font-bold px-2 py-1 mb-1">
+                        <span>ประวัติการทำงาน / ชื่อสถานประกอบการ (List of Employed History)</span>
+                    </div>
+                    <table class="w-full text-left border-collapse" style="table-layout:fixed">
+                        <thead>
+                            <tr class="bg-slate-100 text-[10px]">
+                                <th style="width:20%">ชื่อสถานประกอบการ<br><span class="text-[9px] font-normal">Firm Name</span></th>
+                                <th style="width:16%">ระยะเวลา (จาก-ถึง)<br><span class="text-[9px] font-normal">Date From-To</span></th>
+                                <th style="width:16%">ตำแหน่ง<br><span class="text-[9px] font-normal">Position</span></th>
+                                <th style="width:24%">ลักษณะงาน<br><span class="text-[9px] font-normal">Job Description</span></th>
+                                <th style="width:9%">เงินเดือน<br><span class="text-[9px] font-normal">Salary</span></th>
+                                <th style="width:15%">สาเหตุที่ออก<br><span class="text-[9px] font-normal">Reason</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-[10px]">
+                            <tr>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- References -->
+                <div class="mb-2">
+                    <div class="bg-slate-800 text-white text-xs font-bold px-2 py-1 mb-1">
+                        <span>บุคคลที่ไม่ใช่ญาติซึ่งทราบประวัติของท่านและบริษัทฯ สามารถสอบถามได้ (Persons other than relatives can be contacted)</span>
+                    </div>
+                    <table class="w-full text-left border-collapse" style="table-layout:fixed">
+                        <thead>
+                            <tr class="bg-slate-100 text-[10px]">
+                                <th style="width:22%">ชื่อ - นามสกุล (Name)</th>
+                                <th style="width:38%">สถานที่ทำงาน / ที่อยู่ (Firm Address)</th>
+                                <th style="width:20%">ตำแหน่ง (Position)</th>
+                                <th style="width:20%">โทรศัพท์ (Telephone)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-[10px]">
+                            <tr>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                                <td><input type="text" class="input-line h-6"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Languages proficiency table -->
+                <div class="mb-2">
+                    <div class="bg-slate-800 text-white text-xs font-bold px-2 py-1 mb-1">
+                        <span>ความสามารถด้านภาษา (Languages Proficiency)</span>
+                    </div>
+                    <table class="w-full text-center border-collapse text-[10px]">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th rowspan="2" class="align-middle text-left w-1/5">ประเภทภาษา<br><span class="font-normal text-[9px]">Type of Language</span></th>
+                                <th colspan="3" class="border-b">การพูด (Speaking)</th>
+                                <th colspan="3" class="border-b">การเข้าใจ (Understanding)</th>
+                                <th colspan="3" class="border-b">การอ่าน (Reading)</th>
+                                <th colspan="3" class="border-b">การเขียน (Writing)</th>
+                            </tr>
+                            <tr class="bg-slate-50 text-[9px]">
+                                <th>ดีมาก</th><th>ดี</th><th>พอใช้</th>
+                                <th>ดีมาก</th><th>ดี</th><th>พอใช้</th>
+                                <th>ดีมาก</th><th>ดี</th><th>พอใช้</th>
+                                <th>ดีมาก</th><th>ดี</th><th>พอใช้</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-left font-medium">ไทย (Thai)</td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-medium">อังกฤษ (English)</td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-medium">จีน (Chinese)</td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-medium">อื่น ๆ (Other)</td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                                <td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td><td><input type="checkbox" class="form-checkbox"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2 flex items-center gap-2 text-xs">
+                        <span class="font-medium">ใบรับรองด้านภาษา (Certificate of Language):</span>
+                        <input type="text" class="input-line" placeholder="ระบุใบรับรอง เช่น TOEIC, HSK">
+                    </div>
+                </div>
+
+                <!-- Special Skills and Driving -->
+                <div class="space-y-1 text-xs">
+                    <div class="bg-slate-800 text-white text-xs font-bold px-2 py-1 mb-1">
+                        <span>ความรู้พิเศษและความสามารถพิเศษ (Special Ability)</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-medium">ท่านสามารถใช้คอมพิวเตอร์ได้หรือไม่ (Computer Skills)?</span>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ได้ (No)</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ได้ (Yes)</label>
+                        <div class="flex-1 flex items-center gap-1"><span>ระบุ (Specify):</span><input type="text" class="input-line"></div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-medium">ความสามารถในการใช้เครื่องมือสำนักงาน (Office Equipment):</span>
+                        <input type="text" class="input-line">
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-medium">ท่านสามารถขับรถยนต์ได้หรือไม่ (Drive a car)?</span>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ได้ (No)</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ได้ (Yes)</label>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="font-medium whitespace-nowrap">ใบขับขี่เลขที่ (Driver's License No.):</span>
+                        <input type="text" class="input-line flex-1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Page 2 -->
+            <div class="flex justify-between items-center text-[10px] text-slate-500 pt-2 border-t border-slate-200 mt-2">
+                <span>เริ่มใช้แบบฟอร์มวันที่ 2 กุมภาพันธ์ 2569</span>
+                <span class="font-semibold">ST-A002-2026</span>
+                <span>หน้า 2 / 3</span>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3 ================= -->
+        <div id="page-3" class="a3-container a4-page">
+            <div>
+                <!-- Header Page 3 -->
+                <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-3">
+                    <h2 class="text-sm font-bold text-slate-800">เงื่อนไขการทำงานและคำรับรอง (Work Conditions & Declarations)</h2>
+                    <span id="brand-logo-text-3" class="text-xs font-bold text-amber-600">Star Live-s</span>
+                </div>
+
+                <!-- Conditions questions -->
+                <div class="space-y-3 text-xs mb-4">
+                    <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                        <span>ท่านสามารถไปปฏิบัติงานต่างจังหวัดได้ไหม (เฉพาะตำแหน่งงาน) / Are you willing to work in other provinces?</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ได้ (No)</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ได้ (Yes)</label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                        <span>ในตำแหน่งงานที่ต้องมีการค้ำประกัน / Can you provide a guarantor?</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ขัดข้อง (Yes)</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ขัดข้อง (No)</label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                        <span>ในการปฏิบัติงานเป็นกะหมุนเวียนกันไป / Can you work shift by shift?</span>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่ขัดข้อง (Yes)</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ขัดข้อง (No)</label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-1"><span class="font-medium whitespace-nowrap">บุคคลในบริษัทฯ ที่รู้จัก:</span><input type="text" class="input-line"></div>
+                        <div class="flex items-center gap-1"><span class="font-medium whitespace-nowrap">ความสัมพันธ์:</span><input type="text" class="input-line"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-1"><span class="font-medium whitespace-nowrap">ทราบข่าวการรับสมัครจาก:</span><input type="text" class="input-line"></div>
+                        <div class="flex items-center gap-1"><span class="font-medium whitespace-nowrap">พร้อมปฏิบัติงานวันที่:</span><input type="text" class="input-line"></div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <span class="font-medium">ท่านเคยสมัครงานกับบริษัทนี้มาก่อนหรือไม่ (Have you previously applied)?</span>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> ไม่เคย (No)</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" class="form-checkbox"> เคย (Yes)</label>
+                        <div class="flex-1 flex items-center gap-1"><span>ถ้าเคยเมื่อไร:</span><input type="text" class="input-line"></div>
+                    </div>
+
+                    <!-- Self Introduction -->
+                    <div>
+                        <span class="font-medium block mb-1">กรุณาแนะนำตัวท่านเอง เพื่อให้บริษัทรู้จักตัวท่านดีขึ้น (Please provide a brief self-introduction):</span>
+                        <div class="w-full h-20 border border-slate-300 rounded p-1 bg-slate-50"></div>
+                    </div>
+
+                    <!-- Working days and hours info block -->
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 rounded text-[11px] text-amber-900">
+                        <div class="font-bold mb-1">วันและเวลา ในการปฏิบัติงาน (Working days and hours)</div>
+                        <p>พนักงานทำงานวันจันทร์ถึงวันศุกร์ และทำงานวันเสาร์เว้นเสาร์ โดยสลับเป็นรอบสัปดาห์ (Employees work Monday through Friday, with alternate Saturdays worked on a rotating weekly basis.)</p>
+                        <p class="mt-1">เวลาปฏิบัติงาน 09.00 - 18.00 น. หรือตามข้อตกลง | เวลาพัก 13.00-14.00 น.</p>
+                        <p class="mt-1">ยกเว้นพนักงานบางตำแหน่ง วันทำงาน/วันหยุด จะเป็นไปตามที่บริษัทกำหนด/แจ้งให้ทราบล่วงหน้า</p>
+                    </div>
+
+                    <!-- Declarations text blocks -->
+                    <div class="text-[10px] text-slate-700 space-y-1.5 leading-relaxed text-justify">
+                        <p>ข้าพเจ้าขอรับรองว่าข้อความข้างต้นทั้งหมดนี้เป็นความจริงทุกประการ หากข้อความตอนหนึ่งตอนใดไม่ตรงกับความเป็นจริงข้าพเจ้าขอยอมรับว่า การว่าจ้างที่ตกลงนั้น เป็นอันโมฆะทันที และยินยอมให้เก็บ ใช้ เปิดเผย ตรวจสอบ ข้อมูลดังกล่าวได้ตลอดเวลาตามที่จำเป็นเพื่อการสมัครงาน และการเป็นพนักงานของบริษัทได้</p>
+                        <p class="italic text-slate-500">I certify that my answers are true and complete to the best of my knowledge. If this application leads to employment, I understand that false or misleading information in my application or interview may result in my release. I consent to the disclosure and verification on personal information all the time for applying for a job and being an employee of the company.</p>
+                        <p>ข้าพเจ้าได้อ่านโยบายการคุ้มครองข้อมูลส่วนบุคคล สำหรับบุคลากรของบริษัท ข้าพเจ้ารับทราบและยินยอมให้เก็บ ใช้ เปิดเผย ตรวจสอบ ข้อมูลดังกล่าวได้ตลอดเวลาตามที่จำเป็นเพื่อการสมัครงาน และตลอดระยะเวลาการเป็นพนักงานของบริษัท</p>
+                        <p class="italic text-slate-500">I have read the privacy policy for company personnel. I acknowledge and consent to disclosure and verification on personal information time all the for applying for a job and being an employee of the company.</p>
+                    </div>
+
+                    <!-- Signature Area -->
+                    <div class="flex justify-between items-end pt-4 px-4">
+                        <div class="flex items-center gap-1 text-xs">
+                            <span class="font-medium">วันที่ (Date):</span>
+                            <input type="text" class="input-line w-40">
+                        </div>
+                        <div class="flex flex-col items-center w-64">
+                            <div id="signature-box" class="w-full h-16 border-b border-dotted border-slate-500 flex items-center justify-center">
+                                <img id="signature-image" alt="Applicant signature" style="max-height:60px;max-width:100%;display:none;object-fit:contain">
+                            </div>
+                            <span class="text-[11px] font-medium mt-1">ลงชื่อผู้สมัครงาน (Applicant's Signature)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Page 3 -->
+            <div class="flex justify-between items-center text-[10px] text-slate-500 pt-2 border-t border-slate-200 mt-2">
+                <span>เริ่มใช้แบบฟอร์มวันที่ 2 กุมภาพันธ์ 2569</span>
+                <span class="font-semibold">ST-A002-2026</span>
+                <span>หน้า 3 / 3</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Brand Switching Logic
+        function setBrand(brand) {
+            const btnStar = document.getElementById('btn-starlive');
+            const btnImdp = document.getElementById('btn-imdp');
+            const logoTexts = [
+                document.getElementById('brand-logo-text'),
+                document.getElementById('brand-logo-text-2'),
+                document.getElementById('brand-logo-text-3')
+            ];
+            const title1 = document.getElementById('brand-title-1');
+
+            if (brand === 'starlive') {
+                btnStar.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-amber-500 text-slate-950 shadow";
+                btnImdp.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white";
+
+                logoTexts.forEach(el => {
+                    if(el) {
+                        el.innerText = "Star Live-s";
+                        el.className = "text-xs font-bold text-amber-600";
+                    }
+                });
+                if(title1) title1.className = "text-xl font-bold text-amber-600 flex items-center gap-1 mt-0.5";
+            } else {
+                btnImdp.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-orange-600 text-white shadow";
+                btnStar.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-300 hover:text-white";
+
+                logoTexts.forEach(el => {
+                    if(el) {
+                        el.innerText = "I'M DP";
+                        el.className = "text-xs font-bold text-orange-600";
+                    }
+                });
+                if(title1) title1.className = "text-xl font-bold text-orange-600 flex items-center gap-1 mt-0.5";
+            }
+        }
+
+        // View Mode Toggle (All Pages vs Tabs)
+        let currentViewMode = 'all';
+
+        function switchView(mode) {
+            currentViewMode = mode;
+            const allBtn = document.getElementById('view-all-btn');
+            const tabBtn = document.getElementById('view-tab-btn');
+            const tabNav = document.getElementById('tab-nav-container');
+
+            const p1 = document.getElementById('page-1');
+            const p2 = document.getElementById('page-2');
+            const p3 = document.getElementById('page-3');
+
+            if (mode === 'all') {
+                allBtn.className = "px-3 py-1.5 rounded-md bg-slate-700 text-white font-medium";
+                tabBtn.className = "px-3 py-1.5 rounded-md text-slate-300 hover:text-white font-medium";
+                tabNav.classList.add('hidden');
+
+                p1.classList.remove('hidden');
+                p2.classList.remove('hidden');
+                p3.classList.remove('hidden');
+            } else {
+                tabBtn.className = "px-3 py-1.5 rounded-md bg-slate-700 text-white font-medium";
+                allBtn.className = "px-3 py-1.5 rounded-md text-slate-300 hover:text-white font-medium";
+                tabNav.classList.remove('hidden');
+
+                showTab(1);
+            }
+        }
+
+        function showTab(pageNum) {
+            const p1 = document.getElementById('page-1');
+            const p2 = document.getElementById('page-2');
+            const p3 = document.getElementById('page-3');
+
+            const b1 = document.getElementById('tab-btn-1');
+            const b2 = document.getElementById('tab-btn-2');
+            const b3 = document.getElementById('tab-btn-3');
+
+            p1.classList.add('hidden');
+            p2.classList.add('hidden');
+            p3.classList.add('hidden');
+
+            b1.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-200 text-slate-600";
+            b2.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-200 text-slate-600";
+            b3.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-200 text-slate-600";
+
+            if (pageNum === 1) {
+                p1.classList.remove('hidden');
+                b1.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-white border-t border-x border-slate-300 text-sky-700";
+            } else if (pageNum === 2) {
+                p2.classList.remove('hidden');
+                b2.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-white border-t border-x border-slate-300 text-sky-700";
+            } else if (pageNum === 3) {
+                p3.classList.remove('hidden');
+                b3.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-white border-t border-x border-slate-300 text-sky-700";
+            }
+        }
+    </script>
+    <script src="/application-template-runtime.js" defer></script>
+</body>
+</html>
